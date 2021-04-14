@@ -35,3 +35,10 @@ $router->get('/tests/{testId:[0-9]+}/comments/{commentId:[0-9]+}',
         'uses' => 'TestController@show'
     ]
 );
+
+$router->get('/{testId:[0-9]+}/{commentId:[0-9]+}',
+    [
+        'as' => 'test_routing_short',
+        'uses' => 'TestController@show'
+    ]
+);
