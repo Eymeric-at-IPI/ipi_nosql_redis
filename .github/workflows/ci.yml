@@ -16,6 +16,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    
+    environment: PRODUCTION
 
     steps:
     - name: Setup master branch as workdir
