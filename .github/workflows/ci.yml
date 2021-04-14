@@ -53,4 +53,4 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         debug: true
-        script: whoami
+        script: echo "Test from github action" >> test.txt
