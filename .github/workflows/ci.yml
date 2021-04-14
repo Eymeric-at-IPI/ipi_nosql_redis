@@ -45,7 +45,7 @@ jobs:
       #run: |
        # pytest
 
-    - name: Add stuff on test.text file
+    - name: Execute deployement script over SSH
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
