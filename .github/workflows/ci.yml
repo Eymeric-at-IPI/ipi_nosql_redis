@@ -50,4 +50,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        script: echo "test depuis gha" >> test.txt
+        script: whoami
