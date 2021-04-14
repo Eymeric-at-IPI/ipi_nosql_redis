@@ -13,5 +13,6 @@
         </p>
         
         <p> Test depuis auto CI/CD</p>
+        <p>Django doctor</p>
     </body>
 </html>
