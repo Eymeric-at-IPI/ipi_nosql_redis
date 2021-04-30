@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'redischat:index' %}">Redischat</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.view_name == 'redischat:index' %}active{% endif %}" aria-current="page" href="{% url 'redischat:index' %}">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link position-relative  {% if request.resolver_match.view_name == 'redischat:room_list' %}active{% endif %}" href="{% url 'redischat:room_list' %}">Liste des salons<span
+                            class="badge bg-primary position-relative"
+                            style="top: -10px; font-size: 0.6rem;">{{ room_count }}</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.view_name == 'redischat:room_new' %}active{% endif %}" href="{% url 'redischat:room_new' %}">Créer un salon</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled {% if request.resolver_match.view_name == 'redischat:tmp' %}active{% endif %}" href="{% url 'redischat:tmp' %}">For les boi</a>
+                </li>
+            </ul>
+            <span class="navbar-text">
+        <a href="{% url 'home' %}"><i class="bi bi-house-door"></i></a>
+      </span>
+        </div>
+    </div>
+</nav>

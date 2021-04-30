@@ -11,6 +11,16 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+import redis
+
+
+# Initiate environment variable
+from django.urls import reverse
+
+env = environ.Env()
+environ.Env.read_env()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'xa7k#^fsr7&ci8i9^-qm0m=ebgb8qdl+)ak@8bbk&fz&0maar='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG_MODE')
 
 ALLOWED_HOSTS = []
 
@@ -37,6 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'redischat',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +81,20 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'alphageek.wsgi.application'
+ASGI_APPLICATION = 'alphageek.asgi.application'
 
+# Channels layer
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [
+                (env('DATABASE_HOST'), env('DATABASE_PORT')),
+            ],
+        }
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -80,6 +106,10 @@ DATABASES = {
     }
 }
 
+DB_REDIS = redis.Redis(
+    host=env('DATABASE_HOST'),
+    port=env('DATABASE_PORT')
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -99,6 +129,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/redischat/profile'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

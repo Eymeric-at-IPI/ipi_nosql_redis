@@ -1,0 +1,23 @@
+{% extends 'redischat/layout/base.html' %}
+
+{% block page_title %}Redischat | Home{% endblock %}
+
+{% block content %}
+    <h1 class="mt-5">Redischat</h1>
+    <h4 class="mb-5">Instante tchat app build with redis</h4>
+    <p>
+        Cette application a été conçu pour servir de démonstration technique de la technologie NoSQL <strong>Redis</strong>.
+    </p>
+    <p>
+        Celle-ci est développé en Python grâce au Framework <strong>Django</strong>. Les interactions websocket sont géré via l'outil <em>Channels</em>.<br>
+        La base de donnée Redis a deux objectif :<br class="mb-3">
+        <span class="ms-5"></span>-> servir de <strong>cache</strong> pour <em>Channels</em><br>
+        <span class="ms-5"></span>-> servir de <strong>stockage</strong> pour les messages des différents salons.
+
+    </p>
+
+    <div class="alert alert-secondary text-center" style="margin-top: 10rem;" role="alert">
+      Cette page a été demandé {{ view_count }} fois !
+    </div>
+
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends 'redischat/layout/base.html' %}
+
+{% block page_title %}Redischat | Salon : {{ room_name }}{% endblock %}
+
+{% block content %}
+
+    <style>
+        .message {
+            display: inline-block;
+            position: relative;
+            color: white;
+            background-color: {{ room_color }};
+            max-width: 75%;
+            padding: 0.2rem 0.4rem;
+        }
+
+        .sender {
+            transform: translate(-100%,0);
+            background-color: cornflowerblue;
+            right: -100%;
+        }
+    </style>
+
+    <div class="row mx-auto mt-5">
+        {% if request.session.isAuth == room_id %}
+            <div class="col-md-8 mx-auto">
+                <div class="card mb-5 p-0">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title">{{ room_name }}</h4>
+                        <h6 class="card-subtitle text-muted align-self-end">par {{ room_owner }}</h6>
+                    </div>
+                    <div class="card-body position-relative" id="chat_feed" style="max-height: 400px; overflow-y: auto;">
+                    {% for message in messages %}
+                        <p class="message m-1 {% if message.username == username %}sender{% endif %}">{% if message.username != username %}<strong>{{ message.username }} : </strong>{% endif %}{{ message.content }}</p><br>
+                    {% endfor %}
+                    </div>
+                    <div class="card-footer">
+                        <div class="mb-3">
+                            <div class="input-group mt-3">
+                                <span class="input-group-text"><i class="bi bi-chat-right-dots-fill text-primary"></i></span>
+                                <input type="text" class="form-control" id="new_message" placeholder="Hello !" required>
+                                <button class="btn btn-outline-primary" type="button" id="message_submit">Envoyer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-around align-items-center">
+                    <p class="p-0 m-0">Connecté en tant que <strong>{{ username }}</strong></p>
+                    <form action="{% url 'redischat:room' room_id %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="disconnect" value="1">
+                        <button type="submit" class="btn btn-outline-danger btn-sm" id="dis_submit">déconnexion</button>
+                    </form>
+                </div>
+            </div>
+
+        {% else %}
+
+            <div class="col-md-8 mx-auto">
+                <nav>
+                    <div class="nav nav-tabs" role="tablist">
+                        <button class="nav-link active" id="nav-tab-conn" data-bs-toggle="tab"
+                                data-bs-target="#nav-conn"
+                                type="button" role="tab" aria-controls="nav-conn" aria-selected="true">Connexion
+                        </button>
+                        <button class="nav-link" id="nav-tab-register" data-bs-toggle="tab"
+                                data-bs-target="#nav-register"
+                                type="button" role="tab" aria-controls="nav-register" aria-selected="true">Rejoindre
+                        </button>
+                    </div>
+                </nav>
+
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-conn" role="tabpanel" aria-labelledby="nav-tab-conn">
+                        <form action="{% url 'redischat:room' room_id %}" method="post" class="m-3">
+                            {% csrf_token %}
+
+                            <input type="hidden" name="connexion" value="1">
+
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="conn_username" name="conn_username"
+                                           placeholder="Jean LAPINCE" required>
+                                    <label for="conn_username">Pseudo</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="conn_password" name="conn_password"
+                                           placeholder="Jean LAPINCE" required>
+                                    <label for="conn_password">Mot de passe</label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-outline-success float-end" id="conn_submit">connexion
+                            </button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="nav-register" role="tabpanel" aria-labelledby="nav-tab-register">
+                        <form action="{% url 'redischat:room' room_id %}" method="post" id="form_registration" class="m-3">
+                            {% csrf_token %}
+
+                            <input type="hidden" name="register" value="1">
+
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="reg_username" name="reg_username"
+                                           placeholder="Jean LAPINCE" required>
+                                    <label for="reg_username">Pseudo</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="reg_password" name="reg_password"
+                                           placeholder="Jean LAPINCE" required>
+                                    <label for="reg_password">Mot de passe</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="reg_password_confirm" name="reg_password_confirm"
+                                           placeholder="Jean LAPINCE" required>
+                                    <label for="reg_password_confirm">Confirmation mot de passe</label>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-outline-success float-end" id="reg_submit">Rejoindre
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <ul>
+        <li>sorted set pour les pseudo dans un salon</li>
+        <li>smembers : liste des membre du chat</li>
+        <li>liste des membre connecté ?</li>
+        <li>formatage spécial de message</li>
+    </ul>
+
+    {# Give some Python var to JS #}
+    {{ room_name|json_script:"json-room_name" }}
+    {{ username|json_script:"json-username" }}
+    {{ room_id|json_script:"json-room_id" }}
+
+    <script>
+        const register_form = document.getElementById("form_registration")
+        const register_form_button = document.getElementById("reg_submit")
+        if(register_form_button) {
+            register_form_button.onclick = function (e) {
+                const reg_pwd = document.getElementById("reg_password")
+                const reg_pwd_pwd = document.getElementById("reg_password_confirm")
+                if (reg_pwd.value !== "") {
+                    if (reg_pwd.value === reg_pwd_pwd.value)
+                        register_form.submit()
+                    else
+                        alert("La confirmation de mot de passe est différente du mot de passe !")
+                }
+            }
+        }
+
+        const chat_feed = document.getElementById("chat_feed")
+        const room_name = JSON.parse(document.getElementById("json-room_name").textContent)
+        const username = JSON.parse(document.getElementById("json-username").textContent)
+        const room_id = JSON.parse(document.getElementById("json-room_id").textContent)
+        const message_submit = document.getElementById("message_submit")
+
+        function scrollToBottom() {
+            chat_feed.scrollTop = chat_feed.scrollHeight
+        }
+
+        scrollToBottom()
+
+        message_submit.onclick = function (e) {
+            const message_input = document.getElementById("new_message")
+            const message = message_input.value
+
+            chat_socket.send(JSON.stringify({
+                'message': message,
+                'username': username,
+                'room': room_name
+            }))
+
+            message_input.value = ''
+            message_input.focus()
+        }
+
+        const chat_socket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + "/ws/"
+            + room_name
+            + '/'
+            + room_id
+        )
+
+        chat_socket.onmessage = function (e) {
+            const data = JSON.parse(e.data)
+            if (data.message) {
+                const floating = (data.username == username) ? 'sender' : ""
+                chat_feed.innerHTML += (`
+                    <p class="message ${floating} m-1">${data.message}</p><br class="float-none">
+                `)
+            }
+
+            scrollToBottom()
+        }
+
+        chat_socket.onclose = function (e) {
+            console.log("The socket close unexpectedly")
+        }
+    </script>
+
+{% endblock %}

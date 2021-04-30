@@ -1,0 +1,87 @@
+{% extends 'redischat/layout/base.html' %}
+
+{% block page_title %}Redischat | Home{% endblock %}
+
+{% block content %}
+        <h1>{{ room_name }}</h1>
+
+        <div id="chat_feed" style="max-height: 300px; max-width: 1000px; overflow-y: scroll;">
+            {% for message in messages %}
+            <b>{{ message.username }}</b> {{ message.content }}<br>
+            {% endfor %}
+        </div>
+
+        <div>
+            <div>
+                Message :
+                <input type="text" name="message" id="message_input_id" placeholder="hello !">
+            </div>
+
+            <div>
+                <button type="button" id="message_submit">submit</button>
+            </div>
+
+            <p>Named as <small>{{ username }}</small></p>
+        </div>
+
+        {# Give some Python var to JS #}
+        {{ room_name|json_script:"json-room_name" }}
+        {{ username|json_script:"json-username" }}
+
+        <script>
+
+            const chat_feed = document.getElementById("chat_feed")
+            const room_name = JSON.parse(document.getElementById("json-room_name").textContent)
+            const username = JSON.parse(document.getElementById("json-username").textContent)
+            const message_submit = document.getElementById("message_submit")
+
+            function scrollToBottom() {
+                chat_feed.scrollTop = chat_feed.scrollHeight
+            }
+            scrollToBottom()
+
+            message_submit.onclick = function (e) {
+                const message_input = document.getElementById("message_input_id")
+                const message = message_input.value
+
+                console.log(e)
+                console.log(message)
+
+                chat_socket.send(JSON.stringify({
+                    'message': message,
+                    'username': username,
+                    'room': room_name
+                }))
+
+                message_input.value = ''
+                message_input.focus()
+            }
+
+            const chat_socket = new WebSocket(
+                'ws://'
+                + window.location.host
+                + "/ws/"
+                + room_name
+                + '/'
+            )
+
+            chat_socket.onmessage = function (e) {
+                console.log('onmessage');
+
+                const data = JSON.parse(e.data)
+                if(data.message) {
+                    console.log("pass in")
+                    chat_feed.innerHTML += ('<b>' + data.username + '</b>: ' + data.message + '<br>')
+                }
+                else
+                    alert("Message is empty !")
+
+                scrollToBottom()
+            }
+
+            chat_socket.onclose = function (e) {
+                console.log("The socket close unexpectedly")
+            }
+        </script>
+
+{% endblock %}

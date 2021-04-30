@@ -1,0 +1,75 @@
+{% extends 'redischat/layout/base.html' %}
+
+{% block page_title %}Redischat | Création d'un salon{% endblock %}
+
+{% block content %}
+    <div class="row mx-auto">
+        <div class="col-md-8 mx-auto">
+            <h1 class="mt-5 mb-4">Création d'un nouveau salon</h1>
+
+            <form action="{% url "redischat:room_create" %}" method="post" id="room_form" name="mon_super_form">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="room_name" name="room_name" placeholder="Salon de thé" required>
+                        <label for="room_name">Nom du salon</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="room_owner_pseudo" name="room_owner_pseudo" placeholder="Jean LAPINCE" required>
+                        <label for="room_owner_pseudo">Pseudo pour le salon</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="room_owner_password" name="room_owner_password" placeholder="Jean LAPINCE" required>
+                        <label for="room_owner_password">Mot de passe pour le pseudo</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="room_owner_password_confirm" name="room_owner_password" placeholder="Jean LAPINCE" required>
+                        <label for="room_owner_password_confirm">Confirmation du mot de passe</label>
+                    </div>
+                </div>
+
+                <div class="mb-3 d-flex justify-content-center align-items-center">
+                    <label for="room_color" class="form-label m-0 me-2">Couleur du salon</label>
+                    <input type="color" class="form-control form-control-color" id="room_color" name="room_color" value="#563d7c" title="Choose your color" required>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="room_cgu" name="room_cgu" required>
+                    <label class="form-check-label" for="room_cgu">(obligatoire) J'accepte les <button type="button" class="btn btn-sm btn-link p-0 pe-1" data-bs-toggle="popover" title="Conditions générales d'utilisation" data-bs-content="{% lorem 3 b random %}">CGU</button>qui de toute façons ne sont pas intelligibles.</label>
+                </div>
+
+                <button type="button" class="btn btn-primary" id="room_submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <script>
+        const room_form = document.getElementById("room_form")
+        const room_owner_password = document.getElementById("room_owner_password")
+        const room_owner_password_confirm = document.getElementById("room_owner_password_confirm")
+        const room_name = document.getElementById("room_name")
+        room_name.focus()
+
+        document.getElementById("room_submit").onclick = function (e) {
+            if(room_owner_password.value === room_owner_password_confirm.value)
+                room_form.submit()
+            else
+                alert("La confirmation de mot de passe est différente du mot de passe !")
+        }
+    </script>
+
+
+
+{% endblock %}
