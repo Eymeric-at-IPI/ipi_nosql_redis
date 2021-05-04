@@ -35,7 +35,10 @@ SECRET_KEY = 'xa7k#^fsr7&ci8i9^-qm0m=ebgb8qdl+)ak@8bbk&fz&0maar='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG_MODE')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "alphageek.workshop.tk",
+]
 
 
 # Application definition

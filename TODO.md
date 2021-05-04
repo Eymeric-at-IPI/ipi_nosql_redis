@@ -44,9 +44,3 @@ Stylisé le tout
 -> page d'acceuil qui liste les chats
 -> page de creation d'un tchat
 -> page de tchat
-
-
-Liste de commande :
-
-eval "return redis.call('set','foo','bar')" 0
-eval "return redis.call('get','foo')" 0
